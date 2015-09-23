@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<!-- saved from url=(0083)http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html -->
+<html itemscope="" itemtype="http://schema.org/Blog"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Functors, Applicatives, And Monads In Pictures - adit.io</title>
+    
+    <meta name="viewport" content="width=320">
+    <meta itemprop="name" content="adit.io">
+    <meta itemprop="description" content="Aditya Bhargava&#39;s personal blog.">
+    <meta name="description" content="Aditya Bhargava&#39;s personal blog.">
+    <link href="./Functors, Applicatives, And Monads In Pictures - adit.io_files/css" rel="stylesheet">
+    <link rel="stylesheet" href="./Functors, Applicatives, And Monads In Pictures - adit.io_files/reset.css">
+    <link rel="stylesheet" href="./Functors, Applicatives, And Monads In Pictures - adit.io_files/disqus.css">
+    <link rel="stylesheet" href="./Functors, Applicatives, And Monads In Pictures - adit.io_files/prettify.css">
+    <link rel="stylesheet" href="./Functors, Applicatives, And Monads In Pictures - adit.io_files/style.css">
+    <link rel="stylesheet" href="./Functors, Applicatives, And Monads In Pictures - adit.io_files/bootstrap.css">
+	<script type="text/javascript" async="" src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/ga.js"></script><script type="text/javascript" async="" src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/embed.js"></script></head>
+  <body onload="prettyPrint()">
+    <ul id="menu">
+      <li><a href="http://adit.io/index.html">&gt; adit.io</a></li>
+      <li><a href="http://git.io/egon">Github</a></li>
+      <li class="highlight"><a href="http://manning.com/bhargava">Buy my book! Grokking Algorithms</a></li>
+    </ul>
+    <div id="container" class="container">
+      <div class="row">
+        <div id="content" class="span12">
+
+<ul id="sections">
+<h2>Contents</h2>
+<li><a href="http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html#functors">Functors</a></li>
+<li><a href="http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html#just-what-is-a-functor-really">Just What Is A Functor, Really?</a></li>
+<li><a href="http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html#applicatives">Applicatives</a></li>
+<li><a href="http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html#monads">Monads</a></li>
+<li><a href="http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html#conclusion">Conclusion</a></li>
+<li><a href="http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html#translations">Translations</a></li>
+
+</ul>
+
+          <h1>Functors, Applicatives, And Monads In Pictures</h1>
+<time>Written April 17, 2013</time> <time class="second">Updated May 20, 2013</time>
+
+<p>Here’s a simple value: <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/value.png"></p>
+<p>And we know how to apply a function to this value: <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/value_apply.png"></p>
+<p>Simple enough. Lets extend this by saying that any value can be in a context. For now you can think of a context as a box that you can put a value in:</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/value_and_context.png">
+  <p class="caption"></p>
+</div>
+<p>Now when you apply a function to this value, you’ll get different results <strong>depending on the context</strong>. This is the idea that Functors, Applicatives, Monads, Arrows etc are all based on. The <code class="lang-rb"><span class="typ">Maybe</span></code> data type defines two related contexts:</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/context.png">
+  <p class="caption"></p>
+</div>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">data </span></span><span class="typ"><span class="typ">Maybe</span></span><span class="pln"><span class="pln"> a </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Nothing</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">|</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> a</span></span></code>
+</pre>
+<p>In a second we’ll see how function application is different when something is a <code class="lang-rb"><span class="typ">Just</span><span class="pln"> a</span></code> versus a <code class="lang-rb"><span class="typ">Nothing</span></code>. First let’s talk about Functors!</p>
+<h2 id="functors">Functors</h2>
+<p>When a value is wrapped in a context, you can’t apply a normal function to it:</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/no_fmap_ouch.png">
+  <p class="caption"></p>
+</div>
+<p>This is where <code class="lang-rb"><span class="pln">fmap</span></code> comes in. <code class="lang-rb"><span class="pln">fmap</span></code> is from the street, <code class="lang-rb"><span class="pln">fmap</span></code> is hip to contexts. <code class="lang-rb"><span class="pln">fmap</span></code> knows how to apply functions to values that are wrapped in a context. For example, suppose you want to apply <code class="lang-rb"><span class="pun">(+</span><span class="lit">3</span><span class="pun">)</span></code> to <code class="lang-rb"><span class="typ">Just</span><span class="pln"> </span><span class="lit">2</span></code>. Use <code class="lang-rb"><span class="pln">fmap</span></code>:</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> fmap </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">3</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">2</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
+</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">5</span></span></code>
+</pre>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/fmap_apply.png">
+  <p class="caption"></p>
+</div>
+<p>
+  <strong>Bam!</strong>
+  <code class="lang-rb"><span class="pln">fmap</span></code> shows us how it’s done! But how does <code class="lang-rb"><span class="pln">fmap</span></code> know how to apply the function?</p>
+<h2 id="just-what-is-a-functor-really">Just what is a Functor, really?</h2>
+<p>
+  <code class="lang-rb"><span class="typ">Functor</span></code> is a <a href="http://learnyouahaskell.com/types-and-typeclasses#typeclasses-101">typeclass</a>. Here’s the definition:</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/functor_def.png">
+  <p class="caption"></p>
+</div>
+<p>A <code class="lang-rb"><span class="typ">Functor</span></code> is any data type that defines how <code class="lang-rb"><span class="pln">fmap</span></code> applies to it. Here’s how <code class="lang-rb"><span class="pln">fmap</span></code> works:</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/fmap_def.png">
+  <p class="caption"></p>
+</div>
+<p>So we can do this:</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> fmap </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">3</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">2</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
+</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">5</span></span></code>
+</pre>
+<p>And <code class="lang-rb"><span class="pln">fmap</span></code> magically applies this function, because <code class="lang-rb"><span class="typ">Maybe</span></code> is a Functor. It specifies how <code class="lang-rb"><span class="pln">fmap</span></code> applies to <code class="lang-rb"><span class="typ">Just</span></code>s and <code class="lang-rb"><span class="typ">Nothing</span></code>s:</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">instance </span></span><span class="typ"><span class="typ">Functor</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Maybe</span></span><span class="pln"><span class="pln"> where
+    fmap func </span></span><span class="pun"><span class="pun">(</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> val</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="pln"><span class="pln">func val</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
+    fmap func </span></span><span class="typ"><span class="typ">Nothing</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Nothing</span></span></code>
+</pre>
+<p>Here’s what is happening behind the scenes when we write <code class="lang-rb"><span class="pln">fmap </span><span class="pun">(+</span><span class="lit">3</span><span class="pun">)</span><span class="pln"> </span><span class="pun">(</span><span class="typ">Just</span><span class="pln"> </span><span class="lit">2</span><span class="pun">)</span></code>:</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/fmap_just.png">
+  <p class="caption"></p>
+</div>
+<p>So then you’re like, alright <code class="lang-rb"><span class="pln">fmap</span></code>, please apply <code class="lang-rb"><span class="pun">(+</span><span class="lit">3</span><span class="pun">)</span></code> to a <code class="lang-rb"><span class="typ">Nothing</span></code>?</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/fmap_nothing.png">
+  <p class="caption"></p>
+</div>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> fmap </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">3</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Nothing</span></span><span class="pln"><span class="pln">
+</span></span><span class="typ"><span class="typ">Nothing</span></span></code>
+</pre>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/bill.png" alt="Bill O’Reilly being totally ignorant about the Maybe functor">
+  <p class="caption">Bill O’Reilly being totally ignorant about the Maybe functor</p>
+</div>
+<p>Like Morpheus in the Matrix, <code class="lang-rb"><span class="pln">fmap</span></code> knows just what to do; you start with <code class="lang-rb"><span class="typ">Nothing</span></code>, and you end up with <code class="lang-rb"><span class="typ">Nothing</span></code>! <code class="lang-rb"><span class="pln">fmap</span></code> is zen. Now it makes sense why the <code class="lang-rb"><span class="typ">Maybe</span></code> data type exists. For example, here’s how you work with a database record in a language without <code class="lang-rb"><span class="typ">Maybe</span></code>:</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">post </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Post</span></span><span class="pun"><span class="pun">.</span></span><span class="pln"><span class="pln">find_by_id</span></span><span class="pun"><span class="pun">(</span></span><span class="lit"><span class="lit">1</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
+</span></span><span class="kwd"><span class="kwd">if</span></span><span class="pln"><span class="pln"> post
+  </span></span><span class="kwd"><span class="kwd">return</span></span><span class="pln"><span class="pln"> post</span></span><span class="pun"><span class="pun">.</span></span><span class="pln"><span class="pln">title
+</span></span><span class="kwd"><span class="kwd">else</span></span><span class="pln"><span class="pln">
+  </span></span><span class="kwd"><span class="kwd">return</span></span><span class="pln"><span class="pln"> </span></span><span class="kwd"><span class="kwd">nil</span></span><span class="pln"><span class="pln">
+</span></span><span class="kwd"><span class="kwd">end</span></span></code>
+</pre>
+<p>But in Haskell:</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">fmap </span></span><span class="pun"><span class="pun">(</span></span><span class="pln"><span class="pln">getPostTitle</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="pln"><span class="pln">findPost </span></span><span class="lit"><span class="lit">1</span></span><span class="pun"><span class="pun">)</span></span></code>
+</pre>
+<p>If <code class="lang-rb"><span class="pln">findPost</span></code> returns a post, we will get the title with <code class="lang-rb"><span class="pln">getPostTitle</span></code>. If it returns <code class="lang-rb"><span class="typ">Nothing</span></code>, we will return <code class="lang-rb"><span class="typ">Nothing</span></code>! Pretty neat, huh? <code class="lang-rb"><span class="pun">&lt;</span><span class="pln">$</span><span class="pun">&gt;</span></code> is the infix version of <code class="lang-rb"><span class="pln">fmap</span></code>, so you will often see this instead:</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">getPostTitle </span></span><span class="pun"><span class="pun">&lt;</span></span><span class="pln"><span class="pln">$</span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="pln"><span class="pln">findPost </span></span><span class="lit"><span class="lit">1</span></span><span class="pun"><span class="pun">)</span></span></code>
+</pre>
+<p>Here’s another example: what happens when you apply a function to a list?</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/fmap_list.png">
+  <p class="caption"></p>
+</div>
+<p>Lists are functors too! Here’s the definition:</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">instance </span></span><span class="typ"><span class="typ">Functor</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">[]</span></span><span class="pln"><span class="pln"> where
+    fmap </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> map</span></span></code>
+</pre>
+<p>Okay, okay, one last example: what happens when you apply a function to another function?</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">fmap </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">3</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">1</span></span><span class="pun"><span class="pun">)</span></span></code>
+</pre>
+<p>Here’s a function:</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/function_with_value.png">
+  <p class="caption"></p>
+</div>
+<p>Here’s a function applied to another function:</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/fmap_function.png">
+  <p class="caption"></p>
+</div>
+<p>The result is just another function!</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> import </span></span><span class="typ"><span class="typ">Control</span></span><span class="pun"><span class="pun">.</span></span><span class="typ"><span class="typ">Applicative</span></span><span class="pln"><span class="pln">
+</span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> let foo </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> fmap </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">3</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">2</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
+</span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> foo </span></span><span class="lit"><span class="lit">10</span></span><span class="pln"><span class="pln">
+</span></span><span class="lit"><span class="lit">15</span></span></code>
+</pre>
+<p>So functions are Functors too!</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">instance </span></span><span class="typ"><span class="typ">Functor</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">((-&gt;)</span></span><span class="pln"><span class="pln"> r</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> where
+    fmap f g </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> f </span></span><span class="pun"><span class="pun">.</span></span><span class="pln"><span class="pln"> g</span></span></code>
+</pre>
+<p>When you use fmap on a function, you’re just doing function composition!</p>
+<h2 id="applicatives">Applicatives</h2>
+<p>Applicatives take it to the next level. With an applicative, our values are wrapped in a context, just like Functors:</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/value_and_context.png">
+  <p class="caption"></p>
+</div>
+<p>But our functions are wrapped in a context too!</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/function_and_context.png">
+  <p class="caption"></p>
+</div>
+<p>Yeah. Let that sink in. Applicatives don’t kid around. <code class="lang-rb"><span class="typ">Control</span><span class="pun">.</span><span class="typ">Applicative</span></code> defines <code class="lang-rb"><span class="pun">&lt;*&gt;</span></code>, which knows how to apply a function <em>wrapped in a context</em> to a value <em>wrapped in a context</em>:</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/applicative_just.png">
+  <p class="caption"></p>
+</div>
+<p>i.e:</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">3</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&lt;*&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">2</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">==</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">5</span></span></code>
+</pre>
+<p>Using <code class="lang-rb"><span class="pun">&lt;*&gt;</span></code> can lead to some interesting situations. For example:</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">[(*</span></span><span class="lit"><span class="lit">2</span></span><span class="pun"><span class="pun">),</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">3</span></span><span class="pun"><span class="pun">)]</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&lt;*&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">[</span></span><span class="lit"><span class="lit">1</span></span><span class="pun"><span class="pun">,</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">2</span></span><span class="pun"><span class="pun">,</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">3</span></span><span class="pun"><span class="pun">]</span></span><span class="pln"><span class="pln">
+</span></span><span class="pun"><span class="pun">[</span></span><span class="lit"><span class="lit">2</span></span><span class="pun"><span class="pun">,</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">4</span></span><span class="pun"><span class="pun">,</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">6</span></span><span class="pun"><span class="pun">,</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">4</span></span><span class="pun"><span class="pun">,</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">5</span></span><span class="pun"><span class="pun">,</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">6</span></span><span class="pun"><span class="pun">]</span></span></code>
+</pre>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/applicative_list.png">
+  <p class="caption"></p>
+</div>
+<p>Here’s something you can do with Applicatives that you can’t do with Functors. How do you apply a function that takes two arguments to two wrapped values?</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(+)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&lt;</span></span><span class="pln"><span class="pln">$</span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">5</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
+</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">5</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
+</span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">5</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&lt;</span></span><span class="pln"><span class="pln">$</span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">4</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
+ERROR </span></span><span class="pun"><span class="pun">???</span></span><span class="pln"><span class="pln"> WHAT DOES THIS EVEN MEAN WHY IS THE FUNCTION WRAPPED IN A JUST</span></span></code>
+</pre>
+<p>Applicatives:</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(+)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&lt;</span></span><span class="pln"><span class="pln">$</span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">5</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
+</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">5</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
+</span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">5</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&lt;*&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">3</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
+</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">8</span></span></code>
+</pre>
+<p>
+  <code class="lang-rb"><span class="typ">Applicative</span></code> pushes <code class="lang-rb"><span class="typ">Functor</span></code> aside. “Big boys can use functions with any number of arguments,” it says. “Armed <code class="lang-rb"><span class="pun">&lt;</span><span class="pln">$</span><span class="pun">&gt;</span></code> and <code class="lang-rb"><span class="pun">&lt;*&gt;</span></code>, I can take any function that expects any number of unwrapped values. Then I pass it all wrapped values, and I get a wrapped value out! AHAHAHAHAH!”</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(*)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&lt;</span></span><span class="pln"><span class="pln">$</span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">5</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&lt;*&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">3</span></span><span class="pln"><span class="pln">
+</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">15</span></span></code>
+</pre>
+<p>And hey! There’s a function called <code class="lang-rb"><span class="pln">liftA2</span></code> that does the same thing:</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> liftA2 </span></span><span class="pun"><span class="pun">(*)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">5</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">3</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
+</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">15</span></span></code>
+</pre>
+<h2 id="monads">Monads</h2>
+<p>How to learn about Monads:</p>
+<ol style="list-style-type: decimal">
+  <li>Get a PhD in computer science.</li>
+  <li>Throw it away because you don’t need it for this section!</li>
+</ol>
+<p>Monads add a new twist.</p>
+<p>Functors apply a function to a wrapped value:</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/fmap.png">
+  <p class="caption"></p>
+</div>
+<p>Applicatives apply a wrapped function to a wrapped value:</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/applicative.png">
+  <p class="caption"></p>
+</div>
+<p>Monads apply a function <strong>that returns a wrapped value</strong> to a wrapped value. Monads have a function <code class="lang-rb"><span class="pun">&gt;&gt;=</span></code> (pronounced “bind”) to do this.</p>
+<p>Let’s see an example. Good ol’ <code class="lang-rb"><span class="typ">Maybe</span></code> is a monad:</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/context.png" alt="Just a monad hanging out">
+  <p class="caption">Just a monad hanging out</p>
+</div>
+<p>Suppose <code class="lang-rb"><span class="pln">half</span></code> is a function that only works on even numbers:</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">half x </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> </span></span><span class="kwd"><span class="kwd">if</span></span><span class="pln"><span class="pln"> even x
+           </span></span><span class="kwd"><span class="kwd">then</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="pln"><span class="pln">x </span></span><span class="str"><span class="str">`div`</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">2</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
+           </span></span><span class="kwd"><span class="kwd">else</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Nothing</span></span></code>
+</pre>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/half.png">
+  <p class="caption"></p>
+</div>
+<p>What if we feed it a wrapped value?</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/half_ouch.png">
+  <p class="caption"></p>
+</div>
+<p>We need to use <code class="lang-rb"><span class="pun">&gt;&gt;=</span></code> to shove our wrapped value into the function. Here’s a photo of <code class="lang-rb"><span class="pun">&gt;&gt;=</span></code>:</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/plunger.jpg">
+  <p class="caption"></p>
+</div>
+<p>Here’s how it works:</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">3</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&gt;&gt;=</span></span><span class="pln"><span class="pln"> half
+</span></span><span class="typ"><span class="typ">Nothing</span></span><span class="pln"><span class="pln">
+</span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">4</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&gt;&gt;=</span></span><span class="pln"><span class="pln"> half
+</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">2</span></span><span class="pln"><span class="pln">
+</span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Nothing</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&gt;&gt;=</span></span><span class="pln"><span class="pln"> half
+</span></span><span class="typ"><span class="typ">Nothing</span></span></code>
+</pre>
+<p>What’s happening inside? <code class="lang-rb"><span class="typ">Monad</span></code> is another typeclass. Here’s a partial definition:</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="kwd"><span class="kwd">class</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Monad</span></span><span class="pln"><span class="pln"> m where
+    </span></span><span class="pun"><span class="pun">(&gt;&gt;=)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">::</span></span><span class="pln"><span class="pln"> m a </span></span><span class="pun"><span class="pun">-&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="pln"><span class="pln">a </span></span><span class="pun"><span class="pun">-&gt;</span></span><span class="pln"><span class="pln"> m b</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">-&gt;</span></span><span class="pln"><span class="pln"> m b</span></span></code>
+</pre>
+<p>Where <code class="lang-rb"><span class="pun">&gt;&gt;=</span></code> is:</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/bind_def.png">
+  <p class="caption"></p>
+</div>
+<p>So <code class="lang-rb"><span class="typ">Maybe</span></code> is a Monad:</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">instance </span></span><span class="typ"><span class="typ">Monad</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Maybe</span></span><span class="pln"><span class="pln"> where
+    </span></span><span class="typ"><span class="typ">Nothing</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&gt;&gt;=</span></span><span class="pln"><span class="pln"> func </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Nothing</span></span><span class="pln"><span class="pln">
+    </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> val </span></span><span class="pun"><span class="pun">&gt;&gt;=</span></span><span class="pln"><span class="pln"> func  </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> func val</span></span></code>
+</pre>
+<p>Here it is in action with a <code class="lang-rb"><span class="typ">Just</span><span class="pln"> </span><span class="lit">3</span></code>!</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/monad_just.png">
+  <p class="caption"></p>
+</div>
+<p>And if you pass in a <code class="lang-rb"><span class="typ">Nothing</span></code> it’s even simpler:</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/monad_nothing.png">
+  <p class="caption"></p>
+</div>
+<p>You can also chain these calls:</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">20</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&gt;&gt;=</span></span><span class="pln"><span class="pln"> half </span></span><span class="pun"><span class="pun">&gt;&gt;=</span></span><span class="pln"><span class="pln"> half </span></span><span class="pun"><span class="pun">&gt;&gt;=</span></span><span class="pln"><span class="pln"> half
+</span></span><span class="typ"><span class="typ">Nothing</span></span></code>
+</pre>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/monad_chain.png">
+  <p class="caption"></p>
+</div>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/whoa.png">
+  <p class="caption"></p>
+</div>
+<p>Cool stuff! So now we know that <code class="lang-rb"><span class="typ">Maybe</span></code> is a <code class="lang-rb"><span class="typ">Functor</span></code>, an <code class="lang-rb"><span class="typ">Applicative</span></code>, and a <code class="lang-rb"><span class="typ">Monad</span></code>.</p>
+<p>Now let’s mosey on over to another example: the <code class="lang-rb"><span class="pln">IO</span></code> monad:</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/io.png">
+  <p class="caption"></p>
+</div>
+<p>Specifically three functions. <code class="lang-rb"><span class="pln">getLine</span></code> takes no arguments and gets user input:</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/getLine.png">
+  <p class="caption"></p>
+</div>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">getLine </span></span><span class="pun"><span class="pun">::</span></span><span class="pln"><span class="pln"> IO </span></span><span class="typ"><span class="typ">String</span></span></code>
+</pre>
+<p>
+  <code class="lang-rb"><span class="pln">readFile</span></code> takes a string (a filename) and returns that file’s contents:</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/readFile.png">
+  <p class="caption"></p>
+</div>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">readFile </span></span><span class="pun"><span class="pun">::</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">FilePath</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">-&gt;</span></span><span class="pln"><span class="pln"> IO </span></span><span class="typ"><span class="typ">String</span></span></code>
+</pre>
+<p>
+  <code class="lang-rb"><span class="pln">putStrLn</span></code> takes a string and prints it:</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/putStrLn.png">
+  <p class="caption"></p>
+</div>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">putStrLn </span></span><span class="pun"><span class="pun">::</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">String</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">-&gt;</span></span><span class="pln"><span class="pln"> IO </span></span><span class="pun"><span class="pun">()</span></span></code>
+</pre>
+<p>All three functions take a regular value (or no value) and return a wrapped value. We can chain all of these using <code class="lang-rb"><span class="pun">&gt;&gt;=</span></code>!</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/monad_io.png">
+  <p class="caption"></p>
+</div>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">getLine </span></span><span class="pun"><span class="pun">&gt;&gt;=</span></span><span class="pln"><span class="pln"> readFile </span></span><span class="pun"><span class="pun">&gt;&gt;=</span></span><span class="pln"><span class="pln"> putStrLn</span></span></code>
+</pre>
+<p>Aw yeah! Front row seats to the monad show!</p>
+<p>Haskell also provides us with some syntactical sugar for monads, called <code class="lang-rb"><span class="kwd">do</span></code> notation:</p>
+<pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">foo </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> </span></span><span class="kwd"><span class="kwd">do</span></span><span class="pln"><span class="pln">
+    filename </span></span><span class="pun"><span class="pun">&lt;-</span></span><span class="pln"><span class="pln"> getLine
+    contents </span></span><span class="pun"><span class="pun">&lt;-</span></span><span class="pln"><span class="pln"> readFile filename
+    putStrLn contents</span></span></code>
+</pre>
+<h2 id="conclusion">Conclusion</h2>
+<ol style="list-style-type: decimal">
+  <li>A functor is a data type that implements the <code class="lang-rb"><span class="typ">Functor</span></code> typeclass.</li>
+  <li>An applicative is a data type that implements the <code class="lang-rb"><span class="typ">Applicative</span></code> typeclass.</li>
+  <li>A monad is a data type that implements the <code class="lang-rb"><span class="typ">Monad</span></code> typeclass.</li>
+  <li>A <code class="lang-rb"><span class="typ">Maybe</span></code> implements all three, so it is a functor, an applicative, <em>and</em> a monad.</li>
+</ol>
+<p>What is the difference between the three?</p>
+<div class="figure">
+  <img src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/recap.png">
+  <p class="caption"></p>
+</div>
+<ul>
+  <li>
+    <strong>functors:</strong> you apply a function to a wrapped value using <code class="lang-rb"><span class="pln">fmap</span></code> or <code class="lang-rb"><span class="pun">&lt;</span><span class="pln">$</span><span class="pun">&gt;</span></code></li>
+  <li>
+    <strong>applicatives:</strong> you apply a wrapped function to a wrapped value using <code class="lang-rb"><span class="pun">&lt;*&gt;</span></code> or <code class="lang-rb"><span class="pln">liftA</span></code></li>
+  <li>
+    <strong>monads:</strong> you apply a function that returns a wrapped value, to a wrapped value using <code class="lang-rb"><span class="pun">&gt;&gt;=</span></code> or <code class="lang-rb"><span class="pln">liftM</span></code></li>
+</ul>
+<p>So, dear friend (I think we are friends by this point), I think we both agree that monads are easy and a SMART IDEA(tm). Now that you’ve wet your whistle on this guide, why not pull a Mel Gibson and grab the whole bottle. Check out LYAH’s <a href="http://learnyouahaskell.com/a-fistful-of-monads">section on Monads</a>. There’s a lot of things I’ve glossed over because Miran does a great job going in-depth with this stuff.</p>
+<h2 id="translations">Translations</h2>
+<p>This post has been translated into:</p>
+<ul>
+  <li>
+    <a href="http://habrahabr.ru/post/183150/">Russian</a>
+  </li>
+  <li>
+    <a href="http://qiita.com/suin/items/0255f0637921dcdfe83b">Japanese</a>
+  </li>
+  <li>
+    <a href="https://github.com/netpyoung/netpyoung.Notes/tree/master/external/haskell/functors_applicatives_and_monads_in_pictures">Korean</a>
+  </li>
+  <li>
+    <a href="http://jiyinyiyong.github.io/monads-in-pictures/">Chinese</a>
+  </li>
+  <li>
+    <a href="http://www.leonardmeyer.com/blog/2014/06/functors-applicatives-et-monads-en-images/">French</a>
+  </li>
+  <li>
+    <a href="https://github.com/dbrattli/OSlash/wiki/Functors,-Applicatives,-And-Monads-In-Pictures">Python</a>
+  </li>
+  <li>
+    <a href="http://www.mokacoding.com/blog/functor-applicative-monads-in-pictures">Swift</a>
+  </li>
+  <li>
+    <a href="http://pablogonzalezalba.com/blog/index.php/2015/07/22/functores-aplicativos-y-monadas-en-imagenes-functors-applicatives-and-monads-in-spanish/">Spanish</a>
+  </li>
+  <li>
+    <a href="http://zinh.github.io/haskell/2015/09/16/functors-applicatives-monads-in-pictures.html">Vietnamese</a>
+  </li>
+</ul>
+<p>If you translate this post, <a href="http://www.adit.io/">send me an email</a> and I’ll add it to this list!</p>
+<p>For more monads and pictures, check out <a href="http://adit.io/posts/2013-06-10-three-useful-monads.html">three useful monads</a>.</p>
+
+
+
+
+<div id="disqus_thread"><iframe id="dsq-1" data-disqus-uid="1" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" width="100%" src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/saved_resource.html" style="width: 100% !important; border: none !important; overflow: hidden !important; height: 6968px !important;" horizontalscrolling="no" verticalscrolling="no"></iframe></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'aditio'; // required: replace example with your forum shortname
+    // var disqus_developer = 1; // developer mode is on
+
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the &lt;a href="http://disqus.com/?ref_noscript"&gt;comments powered by Disqus.&lt;/a&gt;</noscript>
+
+
+
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript" src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/prettify.js"></script>
+    <script type="text/javascript" src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/lang-hs.js"></script>
+    <script type="text/javascript" src="./Functors, Applicatives, And Monads In Pictures - adit.io_files/ga(1).js"></script>
+		
+	
+</body></html>

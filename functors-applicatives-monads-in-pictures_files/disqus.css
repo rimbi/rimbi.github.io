@@ -1,0 +1,68 @@
+#disqus_thread {
+  float: left;
+  clear: both;
+  display: block;
+  margin: 50px 0 0 0;
+}
+
+
+#content #disqus_thread {
+  border-top: 1px solid black;
+  padding-top: 20px;
+  width: 100%;
+}
+
+.dsq-comment-text {
+  font-size: 16px;
+  line-height: 18px;
+}
+
+#content #dsq-new-post {
+  background-color: #EEE;
+  padding: 10px;
+  margin: 0 0 20px 0;
+}
+
+#content .dsq-options {
+  display: none;
+}
+
+#content .dsq-global-toolbar-left {
+  display: none;
+}
+
+#content .dsq-request-user-stats, #content .dsq-request-user-info {
+  display: none;
+}
+
+#content #disqus_thread .dsq-login-button {
+  float: left;
+}
+
+#content #dsq-content .dsq-sharing-options {
+  margin: 3px 0 5px 0;
+}
+
+
+#dsq-content #dsq-global-toolbar .dsq-global-toolbar-right {
+  float: left;
+  width: 100%;
+}
+
+#dsq-content #dsq-global-toolbar .dsq-global-toolbar-right li {
+  clear: none;
+}
+
+#dsq-global-toolbar {
+  float: left;
+  width: 100%;
+}
+
+#content .dsq-comment-header {
+  padding: 5px 0;
+}
+
+#dsq-new-post {
+  border-radius: 15px;
+  -moz-border-radius: 15px;
+}
