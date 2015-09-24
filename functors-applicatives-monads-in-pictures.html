@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <!-- saved from url=(0083)http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html -->
-<html itemscope="" itemtype="http://schema.org/Blog"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Functors, Applicatives, And Monads In Pictures - adit.io</title>
+<html itemscope="" itemtype="http://schema.org/Blog">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <title>Resimlerle 'Functor'giller, 'Applicative'giller ve 'Monad'giller</title>
 
     <meta name="viewport" content="width=320">
     <meta itemprop="name" content="adit.io">
@@ -15,51 +18,45 @@
     <link rel="stylesheet" href="./functors-applicatives-monads-in-pictures_files/bootstrap.css">
 	<script type="text/javascript" async="" src="./functors-applicatives-monads-in-pictures_files/ga.js"></script><script type="text/javascript" async="" src="./functors-applicatives-monads-in-pictures_files/embed.js"></script></head>
   <body onload="prettyPrint()">
-    <ul id="menu">
-      <li><a href="http://adit.io/index.html">&gt; adit.io</a></li>
-      <li><a href="http://git.io/egon">Github</a></li>
-      <li class="highlight"><a href="http://manning.com/bhargava">Buy my book! Grokking Algorithms</a></li>
-    </ul>
     <div id="container" class="container">
       <div class="row">
         <div id="content" class="span12">
 
 <ul id="sections">
 <h2>Contents</h2>
-<li><a href="http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html#functors">Functors</a></li>
-<li><a href="http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html#just-what-is-a-functor-really">Just What Is A Functor, Really?</a></li>
-<li><a href="http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html#applicatives">Applicatives</a></li>
-<li><a href="http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html#monads">Monads</a></li>
-<li><a href="http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html#conclusion">Conclusion</a></li>
-<li><a href="http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html#translations">Translations</a></li>
+<li><a href="#functors">'Functor'giller</a></li>
+<li><a href="#just-what-is-a-functor-really">De Bana, Sahi Nedir Functor?</a></li>
+<li><a href="#applicatives">'Applicative'giller</a></li>
+<li><a href="#monads">'Monad'giller</a></li>
+<li><a href="#conclusion">Sonuç</a></li>
 
 </ul>
 
-          <h1>Functors, Applicatives, And Monads In Pictures</h1>
-<time>Written April 17, 2013</time> <time class="second">Updated May 20, 2013</time>
+          <h1>Resimlerle 'Functor'giller, 'Applicative'giller ve 'Monad'giller</h1>
+<time>Çevirildi Sep 24, 2015</time> <time class="second">Güncellendi Sep 24, 2015</time>
 
-<p>Here’s a simple value: <img src="./functors-applicatives-monads-in-pictures_files/value.png"></p>
-<p>And we know how to apply a function to this value: <img src="./functors-applicatives-monads-in-pictures_files/value_apply.png"></p>
-<p>Simple enough. Lets extend this by saying that any value can be in a context. For now you can think of a context as a box that you can put a value in:</p>
+<p>İşte karşınızda basit bir değer: <img src="./functors-applicatives-monads-in-pictures_files/value.png"></p>
+<p>ve bu değere bir fonksiyonu (işlevi) nasıl uygulayacağımızı (application) zaten biliyoruz: <img src="./functors-applicatives-monads-in-pictures_files/value_apply.png"></p>
+<p>Gayet basit. Şimdi bunu biraz genişletelim: Herhangi bir değer bir bağlam (context) içinde yer alabilir. Şimdilik bağlam deyince aklınıza içinde bir değer saklayabileceğimiz bir kutu gelsin:</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/value_and_context.png">
   <p class="caption"></p>
 </div>
-<p>Now when you apply a function to this value, you’ll get different results <strong>depending on the context</strong>. This is the idea that Functors, Applicatives, Monads, Arrows etc are all based on. The <code class="lang-rb"><span class="typ">Maybe</span></code> data type defines two related contexts:</p>
+<p>Şimdi bu değere bir fonksiyonu uyguladığınızda <strong>bağlama göre değişen</strong> farklı sonuçlar elde edersiniz. İşte bu, bütün 'Functor'giller, 'Applicative'giller ve 'Monad'gillerin altında yatan fikirdir. <code class="lang-rb"><span class="typ">Maybe</span></code> veri tipi birbiriyle ilişkili iki bağlam tanımlar:</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/context.png">
   <p class="caption"></p>
 </div>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">data </span></span><span class="typ"><span class="typ">Maybe</span></span><span class="pln"><span class="pln"> a </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Nothing</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">|</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> a</span></span></code>
 </pre>
-<p>In a second we’ll see how function application is different when something is a <code class="lang-rb"><span class="typ">Just</span><span class="pln"> a</span></code> versus a <code class="lang-rb"><span class="typ">Nothing</span></code>. First let’s talk about Functors!</p>
-<h2 id="functors">Functors</h2>
-<p>When a value is wrapped in a context, you can’t apply a normal function to it:</p>
+<p>Az sonra elimizdeki şeyin <code class="lang-rb"><span class="typ">Just</span><span class="pln"> a</span></code>  ya da bir <code class="lang-rb"><span class="typ">Nothing</span></code> olduğuna bağlı olarak fonksiyon uygulamasının nasıl farklılaştığını göreceğiz. Şimdi, Öncelikle 'Functor'gillerden konuşalım!</p>
+<h2 id="functors">'Functor'giller</h2>
+<p>Değer bir bağlamın parçası olduğunda, normal bir fonksiyonu o değer üzerinde uygulamamız mümkün değildir:</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/no_fmap_ouch.png">
   <p class="caption"></p>
 </div>
-<p>This is where <code class="lang-rb"><span class="pln">fmap</span></code> comes in. <code class="lang-rb"><span class="pln">fmap</span></code> is from the street, <code class="lang-rb"><span class="pln">fmap</span></code> is hip to contexts. <code class="lang-rb"><span class="pln">fmap</span></code> knows how to apply functions to values that are wrapped in a context. For example, suppose you want to apply <code class="lang-rb"><span class="pun">(+</span><span class="lit">3</span><span class="pun">)</span></code> to <code class="lang-rb"><span class="typ">Just</span><span class="pln"> </span><span class="lit">2</span></code>. Use <code class="lang-rb"><span class="pln">fmap</span></code>:</p>
+<p>Bu noktada <code class="lang-rb"><span class="pln">fmap</span></code> devreye girer. <code class="lang-rb"><span class="pln">fmap</span></code> sokakların çocuğu, bağlamlarla iş yapmaya alışkın. <code class="lang-rb"><span class="pln">fmap</span></code> bir bağlamın parçası olan değerlere fonksiyonların nasıl uygulanacağını bilir. Örneğin, diyelimki <code class="lang-rb"><span class="pun">(+</span><span class="lit">3</span><span class="pun">)</span></code>'ü <code class="lang-rb"><span class="typ">Just</span><span class="pln"> </span><span class="lit">2</span></code>'ye uygulamak istiyorsunuz. <code class="lang-rb"><span class="pln">fmap</span></code>'i kullanmalısınız:</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> fmap </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">3</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">2</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
 </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">5</span></span></code>
 </pre>
@@ -68,35 +65,35 @@
   <p class="caption"></p>
 </div>
 <p>
-  <strong>Bam!</strong>
-  <code class="lang-rb"><span class="pln">fmap</span></code> shows us how it’s done! But how does <code class="lang-rb"><span class="pln">fmap</span></code> know how to apply the function?</p>
-<h2 id="just-what-is-a-functor-really">Just what is a Functor, really?</h2>
+  <strong>Ta-taaa!</strong>
+  <code class="lang-rb"><span class="pln">fmap</span></code> bize nasıl yapılacağını gösterir. Peki <code class="lang-rb"><span class="pln">fmap</span></code> fonksiyonu nasıl uygulacağını nasıl biliyor?</p>
+<h2 id="just-what-is-a-functor-really">De bana, sahi nedir Functor?</h2>
 <p>
-  <code class="lang-rb"><span class="typ">Functor</span></code> is a <a href="http://learnyouahaskell.com/types-and-typeclasses#typeclasses-101">typeclass</a>. Here’s the definition:</p>
+  <code class="lang-rb"><span class="typ">Functor</span></code> halis muhlis bir <a href="http://learnyouahaskell.com/types-and-typeclasses#typeclasses-101">typeclass</a>'dır. İşte bu da tanımı:</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/functor_def.png">
   <p class="caption"></p>
 </div>
-<p>A <code class="lang-rb"><span class="typ">Functor</span></code> is any data type that defines how <code class="lang-rb"><span class="pln">fmap</span></code> applies to it. Here’s how <code class="lang-rb"><span class="pln">fmap</span></code> works:</p>
+<p>Bir <code class="lang-rb"><span class="typ">Functor</span></code> aslında kendi üzerinde <code class="lang-rb"><span class="pln">fmap</span></code>'in nasıl uygulanacağını tanımlayan herhangi bir veri tipinden başka bir şey değil. Bakın <code class="lang-rb"><span class="pln">fmap</span></code> işte böyle çalışır:</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/fmap_def.png">
   <p class="caption"></p>
 </div>
-<p>So we can do this:</p>
+<p>O yüzden de şunu yapabiliriz:</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> fmap </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">3</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">2</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
 </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">5</span></span></code>
 </pre>
-<p>And <code class="lang-rb"><span class="pln">fmap</span></code> magically applies this function, because <code class="lang-rb"><span class="typ">Maybe</span></code> is a Functor. It specifies how <code class="lang-rb"><span class="pln">fmap</span></code> applies to <code class="lang-rb"><span class="typ">Just</span></code>s and <code class="lang-rb"><span class="typ">Nothing</span></code>s:</p>
+<p>Ve <code class="lang-rb"><span class="pln">fmap</span></code> sihirli bir şekilde bu fonksiyonu uygular. Çünkü <code class="lang-rb"><span class="typ">Maybe</span></code> de sonuçta bir Functor'dır ve <code class="lang-rb"><span class="pln">fmap</span></code>'in <code class="lang-rb"><span class="typ">Just</span></code>lara ve <code class="lang-rb"><span class="typ">Nothing</span></code>lere nasıl uygulanacağını açıkça belirtmiştir:</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">instance </span></span><span class="typ"><span class="typ">Functor</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Maybe</span></span><span class="pln"><span class="pln"> where
     fmap func </span></span><span class="pun"><span class="pun">(</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> val</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="pln"><span class="pln">func val</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
     fmap func </span></span><span class="typ"><span class="typ">Nothing</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Nothing</span></span></code>
 </pre>
-<p>Here’s what is happening behind the scenes when we write <code class="lang-rb"><span class="pln">fmap </span><span class="pun">(+</span><span class="lit">3</span><span class="pun">)</span><span class="pln"> </span><span class="pun">(</span><span class="typ">Just</span><span class="pln"> </span><span class="lit">2</span><span class="pun">)</span></code>:</p>
+<p><code class="lang-rb"><span class="pln">fmap </span><span class="pun">(+</span><span class="lit">3</span><span class="pun">)</span><span class="pln"> </span><span class="pun">(</span><span class="typ">Just</span><span class="pln"> </span><span class="lit">2</span><span class="pun">)</span></code> yazdığımızda arkada şunlar olur:</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/fmap_just.png">
   <p class="caption"></p>
 </div>
-<p>So then you’re like, alright <code class="lang-rb"><span class="pln">fmap</span></code>, please apply <code class="lang-rb"><span class="pun">(+</span><span class="lit">3</span><span class="pun">)</span></code> to a <code class="lang-rb"><span class="typ">Nothing</span></code>?</p>
+<p>Belki de sabırsızsınız ve "hadi <code class="lang-rb"><span class="pln">fmap</span></code>, lütfen <code class="lang-rb"><span class="pun">(+</span><span class="lit">3</span><span class="pun">)</span></code>ü <code class="lang-rb"><span class="typ">Nothing</span></code>e uygula" demek istiyorsunuz?</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/fmap_nothing.png">
   <p class="caption"></p>
@@ -106,9 +103,9 @@
 </pre>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/bill.png" alt="Bill O’Reilly being totally ignorant about the Maybe functor">
-  <p class="caption">Bill O’Reilly being totally ignorant about the Maybe functor</p>
+  <p class="caption">Bill O’Reilly, Maybe functor'ından tamamen habersizce...</p>
 </div>
-<p>Like Morpheus in the Matrix, <code class="lang-rb"><span class="pln">fmap</span></code> knows just what to do; you start with <code class="lang-rb"><span class="typ">Nothing</span></code>, and you end up with <code class="lang-rb"><span class="typ">Nothing</span></code>! <code class="lang-rb"><span class="pln">fmap</span></code> is zen. Now it makes sense why the <code class="lang-rb"><span class="typ">Maybe</span></code> data type exists. For example, here’s how you work with a database record in a language without <code class="lang-rb"><span class="typ">Maybe</span></code>:</p>
+<p>Matrix'deki Morpheus gibi, <code class="lang-rb"><span class="pln">fmap</span></code> sadece ne yapması gerektiğini bilir; <code class="lang-rb"><span class="typ">Nothing</span></code>le başlar, <code class="lang-rb"><span class="typ">Nothing</span></code>le bitirirsiniz! <code class="lang-rb"><span class="pln">fmap</span></code> 'zen'dir. Şimdi <code class="lang-rb"><span class="typ">Maybe</span></code> veri tipinin varlığı anlam kazanmaya başlıyor. Mesela, <code class="lang-rb"><span class="typ">Maybe</span></code>den yoksun bir dilde veri tabanı kayıtlarıyla böyle çalışırsınız:</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">post </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Post</span></span><span class="pun"><span class="pun">.</span></span><span class="pln"><span class="pln">find_by_id</span></span><span class="pun"><span class="pun">(</span></span><span class="lit"><span class="lit">1</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
 </span></span><span class="kwd"><span class="kwd">if</span></span><span class="pln"><span class="pln"> post
   </span></span><span class="kwd"><span class="kwd">return</span></span><span class="pln"><span class="pln"> post</span></span><span class="pun"><span class="pun">.</span></span><span class="pln"><span class="pln">title
@@ -116,65 +113,65 @@
   </span></span><span class="kwd"><span class="kwd">return</span></span><span class="pln"><span class="pln"> </span></span><span class="kwd"><span class="kwd">nil</span></span><span class="pln"><span class="pln">
 </span></span><span class="kwd"><span class="kwd">end</span></span></code>
 </pre>
-<p>But in Haskell:</p>
+<p>Bir de Haskell'e bakın:</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">fmap </span></span><span class="pun"><span class="pun">(</span></span><span class="pln"><span class="pln">getPostTitle</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="pln"><span class="pln">findPost </span></span><span class="lit"><span class="lit">1</span></span><span class="pun"><span class="pun">)</span></span></code>
 </pre>
-<p>If <code class="lang-rb"><span class="pln">findPost</span></code> returns a post, we will get the title with <code class="lang-rb"><span class="pln">getPostTitle</span></code>. If it returns <code class="lang-rb"><span class="typ">Nothing</span></code>, we will return <code class="lang-rb"><span class="typ">Nothing</span></code>! Pretty neat, huh? <code class="lang-rb"><span class="pun">&lt;</span><span class="pln">$</span><span class="pun">&gt;</span></code> is the infix version of <code class="lang-rb"><span class="pln">fmap</span></code>, so you will often see this instead:</p>
+<p>Eğer <code class="lang-rb"><span class="pln">findPost</span></code> geçerli bir post dönerse, <code class="lang-rb"><span class="pln">getPostTitle</span></code>ile post'un title'ını elde ederiz. Yok eğer <code class="lang-rb"><span class="typ">Nothing</span></code> dönerse, biz de <code class="lang-rb"><span class="typ">Nothing</span></code> döneriz! Nasıl? Çok havalı di mi! <code class="lang-rb"><span class="pun">&lt;</span><span class="pln">$</span><span class="pun">&gt;</span></code> ise <code class="lang-rb"><span class="pln">fmap</span></code>in daha sık rastlayacağınız infix versiyonu:</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">getPostTitle </span></span><span class="pun"><span class="pun">&lt;</span></span><span class="pln"><span class="pln">$</span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="pln"><span class="pln">findPost </span></span><span class="lit"><span class="lit">1</span></span><span class="pun"><span class="pun">)</span></span></code>
 </pre>
-<p>Here’s another example: what happens when you apply a function to a list?</p>
+<p>Başka bir örnek daha: Bilin bakalım bir fonksiyonu bir listeye uyguladığımızda ne olur?</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/fmap_list.png">
   <p class="caption"></p>
 </div>
-<p>Lists are functors too! Here’s the definition:</p>
+<p>List veri tipi de bir functor'dır! Bakalım nasıl tanımlanmış:</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">instance </span></span><span class="typ"><span class="typ">Functor</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">[]</span></span><span class="pln"><span class="pln"> where
     fmap </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> map</span></span></code>
 </pre>
-<p>Okay, okay, one last example: what happens when you apply a function to another function?</p>
+<p>Peki, peki, son bir örnek: Bir fonksiyonu diğer bir fonksiyona uyguladığınızda ne olur?</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">fmap </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">3</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">1</span></span><span class="pun"><span class="pun">)</span></span></code>
 </pre>
-<p>Here’s a function:</p>
+<p>İşte size bir fonksiyon:</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/function_with_value.png">
   <p class="caption"></p>
 </div>
-<p>Here’s a function applied to another function:</p>
+<p>Bu da bir fonksiyon üzerinde giğer bir fonksiyonun uygulaması:</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/fmap_function.png">
   <p class="caption"></p>
 </div>
-<p>The result is just another function!</p>
+<p>Sonuç mu? Yeni, başka bir fonksiyon!</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> import </span></span><span class="typ"><span class="typ">Control</span></span><span class="pun"><span class="pun">.</span></span><span class="typ"><span class="typ">Applicative</span></span><span class="pln"><span class="pln">
 </span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> let foo </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> fmap </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">3</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">2</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
 </span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> foo </span></span><span class="lit"><span class="lit">10</span></span><span class="pln"><span class="pln">
 </span></span><span class="lit"><span class="lit">15</span></span></code>
 </pre>
-<p>So functions are Functors too!</p>
+<p>Bu da demek oluyor ki fonksiyonlar da 'Functor'gillerdendir!</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">instance </span></span><span class="typ"><span class="typ">Functor</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">((-&gt;)</span></span><span class="pln"><span class="pln"> r</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> where
     fmap f g </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> f </span></span><span class="pun"><span class="pun">.</span></span><span class="pln"><span class="pln"> g</span></span></code>
 </pre>
-<p>When you use fmap on a function, you’re just doing function composition!</p>
-<h2 id="applicatives">Applicatives</h2>
-<p>Applicatives take it to the next level. With an applicative, our values are wrapped in a context, just like Functors:</p>
+<p>Bir fonksiyon üzerinde fmap uyguladığınızda, aslında yaptığınız şey fonksiyon bileştirmeden (function composition) başka bir şey değil!</p>
+<h2 id="applicatives">'Applicative'giller</h2>
+<p>'Applicative'giller işi bir üst seviyeye taşır. Applicative kullandığımızda da değerlerimiz bir baplamın parçasıdırlar, aynen 'Functor'gillerdeki gibi:</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/value_and_context.png">
   <p class="caption"></p>
 </div>
-<p>But our functions are wrapped in a context too!</p>
+<p>Farklı olan ise bu kez fonksiyonlarımızın da bir bağlamın parçası olması!</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/function_and_context.png">
   <p class="caption"></p>
 </div>
-<p>Yeah. Let that sink in. Applicatives don’t kid around. <code class="lang-rb"><span class="typ">Control</span><span class="pun">.</span><span class="typ">Applicative</span></code> defines <code class="lang-rb"><span class="pun">&lt;*&gt;</span></code>, which knows how to apply a function <em>wrapped in a context</em> to a value <em>wrapped in a context</em>:</p>
+<p>Öncelikle, bunu bi içinize sindirin. 'Applicative'giller şaka sevmez. <code class="lang-rb"><span class="typ">Control</span><span class="pun">.</span><span class="typ">Applicative</span></code> içinde tanımlanan <code class="lang-rb"><span class="pun">&lt;*&gt;</span></code> <em>bir bağlamın içine yerleştrilmiş bir fonksiyon</em>un gene <em>bir bağlamın parçası olan bir değer</em>e nasıl uygulanacağını bilir:</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/applicative_just.png">
   <p class="caption"></p>
 </div>
-<p>i.e:</p>
+<p>Misal:</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">3</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&lt;*&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">2</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">==</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">5</span></span></code>
 </pre>
-<p>Using <code class="lang-rb"><span class="pun">&lt;*&gt;</span></code> can lead to some interesting situations. For example:</p>
+<p><code class="lang-rb"><span class="pun">&lt;*&gt;</span></code>ın kullanımı bazı beklenmedik, ilginç durumları ortaya çıkarabilir. Örneğin:</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">[(*</span></span><span class="lit"><span class="lit">2</span></span><span class="pun"><span class="pun">),</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">3</span></span><span class="pun"><span class="pun">)]</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&lt;*&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">[</span></span><span class="lit"><span class="lit">1</span></span><span class="pun"><span class="pun">,</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">2</span></span><span class="pun"><span class="pun">,</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">3</span></span><span class="pun"><span class="pun">]</span></span><span class="pln"><span class="pln">
 </span></span><span class="pun"><span class="pun">[</span></span><span class="lit"><span class="lit">2</span></span><span class="pun"><span class="pun">,</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">4</span></span><span class="pun"><span class="pun">,</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">6</span></span><span class="pun"><span class="pun">,</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">4</span></span><span class="pun"><span class="pun">,</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">5</span></span><span class="pun"><span class="pun">,</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">6</span></span><span class="pun"><span class="pun">]</span></span></code>
 </pre>
@@ -182,51 +179,51 @@
   <img src="./functors-applicatives-monads-in-pictures_files/applicative_list.png">
   <p class="caption"></p>
 </div>
-<p>Here’s something you can do with Applicatives that you can’t do with Functors. How do you apply a function that takes two arguments to two wrapped values?</p>
+<p>Gelin 'Functor'gillerle yapamayacağınız ama 'Applicative'gillerle mümkün olan bir şeye bakalım. İki argümanlı bir fonksiyonu (bir bağlam içinde) paketlenmiş iki değere nasıl uygularsınız?</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(+)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&lt;</span></span><span class="pln"><span class="pln">$</span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">5</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
 </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">5</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
 </span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">5</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&lt;</span></span><span class="pln"><span class="pln">$</span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">4</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
 ERROR </span></span><span class="pun"><span class="pun">???</span></span><span class="pln"><span class="pln"> WHAT DOES THIS EVEN MEAN WHY IS THE FUNCTION WRAPPED IN A JUST</span></span></code>
 </pre>
-<p>Applicatives:</p>
+<p>'Applicative'giller:</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(+)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&lt;</span></span><span class="pln"><span class="pln">$</span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">5</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
 </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">5</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
 </span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(+</span></span><span class="lit"><span class="lit">5</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&lt;*&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">3</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
 </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">8</span></span></code>
 </pre>
 <p>
-  <code class="lang-rb"><span class="typ">Applicative</span></code> pushes <code class="lang-rb"><span class="typ">Functor</span></code> aside. “Big boys can use functions with any number of arguments,” it says. “Armed <code class="lang-rb"><span class="pun">&lt;</span><span class="pln">$</span><span class="pun">&gt;</span></code> and <code class="lang-rb"><span class="pun">&lt;*&gt;</span></code>, I can take any function that expects any number of unwrapped values. Then I pass it all wrapped values, and I get a wrapped value out! AHAHAHAHAH!”</p>
+  <code class="lang-rb"><span class="typ">Applicative</span></code> <code class="lang-rb"><span class="typ">Functor</span></code>ı yerinden eder. “Yetişkinler, kaç argümanı olduğunun önemi yok, istediği fonksiyonu kullanabilir” der. “Cephanemde <code class="lang-rb"><span class="pun">&lt;</span><span class="pln">$</span><span class="pun">&gt;</span></code> ve <code class="lang-rb"><span class="pun">&lt;*&gt;</span></code> varken, kaç argümanlı olduğuna bakmadan herhangi bir fonksiyonu kullanabilir, sonra da ona paketlenmiş bütün değerleri geçirir ve karşılığında da paketlenmiş değeri alırım! AHAHAHAHAH!”</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(*)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&lt;</span></span><span class="pln"><span class="pln">$</span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">5</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&lt;*&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">3</span></span><span class="pln"><span class="pln">
 </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">15</span></span></code>
 </pre>
-<p>And hey! There’s a function called <code class="lang-rb"><span class="pln">liftA2</span></code> that does the same thing:</p>
+<p>Bir dakika! Aynı şeyi yapan <code class="lang-rb"><span class="pln">liftA2</span></code> adında bir fonksiyon var zaten:</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> liftA2 </span></span><span class="pun"><span class="pun">(*)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">5</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">3</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
 </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">15</span></span></code>
 </pre>
-<h2 id="monads">Monads</h2>
-<p>How to learn about Monads:</p>
+<h2 id="monads">'Monad'giller</h2>
+<p>'Monad'gilleri öğrenmenin bir kaç yolu var:</p>
 <ol style="list-style-type: decimal">
-  <li>Get a PhD in computer science.</li>
-  <li>Throw it away because you don’t need it for this section!</li>
+  <li>Bilgisayar Bilimlerinde Doktora yap.</li>
+  <li>Unut gitsin! Çünkü bu bölüm için ona ihtiyacın yok!</li>
 </ol>
-<p>Monads add a new twist.</p>
-<p>Functors apply a function to a wrapped value:</p>
+<p>'Monad'giller yeni bir fırsat sunar.</p>
+<p>'Functor'giller paketlenmiş bir değere bir fonksiyonu uygularlar:</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/fmap.png">
   <p class="caption"></p>
 </div>
-<p>Applicatives apply a wrapped function to a wrapped value:</p>
+<p>'Applicative'giller paketlenmiş bir fonksiyonu paketlenmiş bir değere uygularlar:</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/applicative.png">
   <p class="caption"></p>
 </div>
-<p>Monads apply a function <strong>that returns a wrapped value</strong> to a wrapped value. Monads have a function <code class="lang-rb"><span class="pun">&gt;&gt;=</span></code> (pronounced “bind”) to do this.</p>
-<p>Let’s see an example. Good ol’ <code class="lang-rb"><span class="typ">Maybe</span></code> is a monad:</p>
+<p>'Monad'giller <strong>paketlenmiş bir değer dönen</strong> bir fonksiyonu paketlenmiş bi değere uygularlar. 'Monad'giller bunu sahip oldukları <code class="lang-rb"><span class="pun">&gt;&gt;=</span></code> (İngilizce “bind” olarak söylenir) fonksiyonu ile yaparlar.</p>
+<p>İyisi mi bir örnek üzerinden gidelim. Eski dostumuz <code class="lang-rb"><span class="typ">Maybe</span></code> de bir monad:</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/context.png" alt="Just a monad hanging out">
-  <p class="caption">Just a monad hanging out</p>
+  <p class="caption">Kendi halinde takılan bir monad: Just a</p>
 </div>
-<p>Suppose <code class="lang-rb"><span class="pln">half</span></code> is a function that only works on even numbers:</p>
+<p>Farz edelim ki <code class="lang-rb"><span class="pln">half</span></code> sadece çift sayılarla çalışan şahsına münhasır bir fonksiyon:</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">half x </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> </span></span><span class="kwd"><span class="kwd">if</span></span><span class="pln"><span class="pln"> even x
            </span></span><span class="kwd"><span class="kwd">then</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="pln"><span class="pln">x </span></span><span class="str"><span class="str">`div`</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">2</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln">
            </span></span><span class="kwd"><span class="kwd">else</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Nothing</span></span></code>
@@ -235,17 +232,17 @@ ERROR </span></span><span class="pun"><span class="pun">???</span></span><span c
   <img src="./functors-applicatives-monads-in-pictures_files/half.png">
   <p class="caption"></p>
 </div>
-<p>What if we feed it a wrapped value?</p>
+<p>Muhtereme paketlenmiş bir değer geçmeye çalışırsak ne olur?</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/half_ouch.png">
   <p class="caption"></p>
 </div>
-<p>We need to use <code class="lang-rb"><span class="pun">&gt;&gt;=</span></code> to shove our wrapped value into the function. Here’s a photo of <code class="lang-rb"><span class="pun">&gt;&gt;=</span></code>:</p>
+<p>Paketlenmiş değeri kendisine itelemek için kullanmamız gereken şey <code class="lang-rb"><span class="pun">&gt;&gt;=</span></code>. Halk arasında <code class="lang-rb"><span class="pun">&gt;&gt;=</span></code>:</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/plunger.jpg">
   <p class="caption"></p>
 </div>
-<p>Here’s how it works:</p>
+<p>Bir de nasıl çalıştığına bakalım:</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">3</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&gt;&gt;=</span></span><span class="pln"><span class="pln"> half
 </span></span><span class="typ"><span class="typ">Nothing</span></span><span class="pln"><span class="pln">
 </span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">4</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&gt;&gt;=</span></span><span class="pln"><span class="pln"> half
@@ -253,31 +250,31 @@ ERROR </span></span><span class="pun"><span class="pun">???</span></span><span c
 </span></span><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Nothing</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&gt;&gt;=</span></span><span class="pln"><span class="pln"> half
 </span></span><span class="typ"><span class="typ">Nothing</span></span></code>
 </pre>
-<p>What’s happening inside? <code class="lang-rb"><span class="typ">Monad</span></code> is another typeclass. Here’s a partial definition:</p>
+<p>Sahi arka planda neler dönüyor? <code class="lang-rb"><span class="typ">Monad</span></code> da başka bir typeclass ve şu da kısmi tanımı:</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="kwd"><span class="kwd">class</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Monad</span></span><span class="pln"><span class="pln"> m where
     </span></span><span class="pun"><span class="pun">(&gt;&gt;=)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">::</span></span><span class="pln"><span class="pln"> m a </span></span><span class="pun"><span class="pun">-&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">(</span></span><span class="pln"><span class="pln">a </span></span><span class="pun"><span class="pun">-&gt;</span></span><span class="pln"><span class="pln"> m b</span></span><span class="pun"><span class="pun">)</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">-&gt;</span></span><span class="pln"><span class="pln"> m b</span></span></code>
 </pre>
-<p>Where <code class="lang-rb"><span class="pun">&gt;&gt;=</span></code> is:</p>
+<p>Biraz daha açarsak, <code class="lang-rb"><span class="pun">&gt;&gt;=</span></code> şöyle bir şey:</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/bind_def.png">
   <p class="caption"></p>
 </div>
-<p>So <code class="lang-rb"><span class="typ">Maybe</span></code> is a Monad:</p>
+<p><code class="lang-rb"><span class="typ">Maybe</span></code> de bir Monad:</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">instance </span></span><span class="typ"><span class="typ">Monad</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Maybe</span></span><span class="pln"><span class="pln"> where
     </span></span><span class="typ"><span class="typ">Nothing</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&gt;&gt;=</span></span><span class="pln"><span class="pln"> func </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Nothing</span></span><span class="pln"><span class="pln">
     </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> val </span></span><span class="pun"><span class="pun">&gt;&gt;=</span></span><span class="pln"><span class="pln"> func  </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> func val</span></span></code>
 </pre>
-<p>Here it is in action with a <code class="lang-rb"><span class="typ">Just</span><span class="pln"> </span><span class="lit">3</span></code>!</p>
+<p>Burada kendisini <code class="lang-rb"><span class="typ">Just</span><span class="pln"> </span><span class="lit">3</span></code> kılığında iş üstünde görüyoruz!</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/monad_just.png">
   <p class="caption"></p>
 </div>
-<p>And if you pass in a <code class="lang-rb"><span class="typ">Nothing</span></code> it’s even simpler:</p>
+<p><code class="lang-rb"><span class="typ">Nothing</span></code> geçtiğinizde işler daha da basitleşir:</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/monad_nothing.png">
   <p class="caption"></p>
 </div>
-<p>You can also chain these calls:</p>
+<p>Şu şekilde zincirleme çağrılar da yapabilirsiniz:</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pun"><span class="pun">&gt;</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">Just</span></span><span class="pln"><span class="pln"> </span></span><span class="lit"><span class="lit">20</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">&gt;&gt;=</span></span><span class="pln"><span class="pln"> half </span></span><span class="pun"><span class="pun">&gt;&gt;=</span></span><span class="pln"><span class="pln"> half </span></span><span class="pun"><span class="pun">&gt;&gt;=</span></span><span class="pln"><span class="pln"> half
 </span></span><span class="typ"><span class="typ">Nothing</span></span></code>
 </pre>
@@ -289,13 +286,13 @@ ERROR </span></span><span class="pun"><span class="pun">???</span></span><span c
   <img src="./functors-applicatives-monads-in-pictures_files/whoa.png">
   <p class="caption"></p>
 </div>
-<p>Cool stuff! So now we know that <code class="lang-rb"><span class="typ">Maybe</span></code> is a <code class="lang-rb"><span class="typ">Functor</span></code>, an <code class="lang-rb"><span class="typ">Applicative</span></code>, and a <code class="lang-rb"><span class="typ">Monad</span></code>.</p>
-<p>Now let’s mosey on over to another example: the <code class="lang-rb"><span class="pln">IO</span></code> monad:</p>
+<p>Çok havalı! An itibariyle <code class="lang-rb"><span class="typ">Maybe</span></code>nin bir <code class="lang-rb"><span class="typ">Functor</span></code>, bir <code class="lang-rb"><span class="typ">Applicative</span></code>, ve bir <code class="lang-rb"><span class="typ">Monad</span></code> olduğunu biliyoruz.</p>
+<p>Şimdi de başka bir örnek üzerinden gidelim: <code class="lang-rb"><span class="pln">IO</span></code> monadı:</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/io.png">
   <p class="caption"></p>
 </div>
-<p>Specifically three functions. <code class="lang-rb"><span class="pln">getLine</span></code> takes no arguments and gets user input:</p>
+<p>Belli üç fonksiyonumuz var. <code class="lang-rb"><span class="pln">getLine</span></code> argümanı yok, kullanıcıdan girdi alır:</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/getLine.png">
   <p class="caption"></p>
@@ -303,7 +300,7 @@ ERROR </span></span><span class="pun"><span class="pun">???</span></span><span c
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">getLine </span></span><span class="pun"><span class="pun">::</span></span><span class="pln"><span class="pln"> IO </span></span><span class="typ"><span class="typ">String</span></span></code>
 </pre>
 <p>
-  <code class="lang-rb"><span class="pln">readFile</span></code> takes a string (a filename) and returns that file’s contents:</p>
+  <code class="lang-rb"><span class="pln">readFile</span></code> bir dosya ismi (string) alır ve karşılığında o dosyanın içeriğini döner:</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/readFile.png">
   <p class="caption"></p>
@@ -311,101 +308,70 @@ ERROR </span></span><span class="pun"><span class="pun">???</span></span><span c
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">readFile </span></span><span class="pun"><span class="pun">::</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">FilePath</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">-&gt;</span></span><span class="pln"><span class="pln"> IO </span></span><span class="typ"><span class="typ">String</span></span></code>
 </pre>
 <p>
-  <code class="lang-rb"><span class="pln">putStrLn</span></code> takes a string and prints it:</p>
+  <code class="lang-rb"><span class="pln">putStrLn</span></code> bir string alır ve onu yazdırır:</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/putStrLn.png">
   <p class="caption"></p>
 </div>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">putStrLn </span></span><span class="pun"><span class="pun">::</span></span><span class="pln"><span class="pln"> </span></span><span class="typ"><span class="typ">String</span></span><span class="pln"><span class="pln"> </span></span><span class="pun"><span class="pun">-&gt;</span></span><span class="pln"><span class="pln"> IO </span></span><span class="pun"><span class="pun">()</span></span></code>
 </pre>
-<p>All three functions take a regular value (or no value) and return a wrapped value. We can chain all of these using <code class="lang-rb"><span class="pun">&gt;&gt;=</span></code>!</p>
+<p>Fonksiyoların üçü de sıradan bir değer (ya da hiçbirşey) kabul eder ve karşılığında paketlenmiş bir değer döner. Biz de bu fonksiyonları <code class="lang-rb"><span class="pun">&gt;&gt;=</span></code> yardımıyla zincirleyerek kullanabiliriz.!</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/monad_io.png">
   <p class="caption"></p>
 </div>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">getLine </span></span><span class="pun"><span class="pun">&gt;&gt;=</span></span><span class="pln"><span class="pln"> readFile </span></span><span class="pun"><span class="pun">&gt;&gt;=</span></span><span class="pln"><span class="pln"> putStrLn</span></span></code>
 </pre>
-<p>Aw yeah! Front row seats to the monad show!</p>
-<p>Haskell also provides us with some syntactical sugar for monads, called <code class="lang-rb"><span class="kwd">do</span></code> notation:</p>
+<p>İşte bu! Monad gösterisine ön sıradan koltuklar var! İzlemeyen kalmasın!</p>
+<p>Haskell, monadların kullanımı için bazı güzellikler (syntactical sugar) sunar ki biz buna <code class="lang-rb"><span class="kwd">do</span></code> notasyonu diyoruz:</p>
 <pre class="lang-rb"><span class="pln">  </span><code class="lang-rb"><span class="pln"><span class="pln">foo </span></span><span class="pun"><span class="pun">=</span></span><span class="pln"><span class="pln"> </span></span><span class="kwd"><span class="kwd">do</span></span><span class="pln"><span class="pln">
     filename </span></span><span class="pun"><span class="pun">&lt;-</span></span><span class="pln"><span class="pln"> getLine
     contents </span></span><span class="pun"><span class="pun">&lt;-</span></span><span class="pln"><span class="pln"> readFile filename
     putStrLn contents</span></span></code>
 </pre>
-<h2 id="conclusion">Conclusion</h2>
+<h2 id="conclusion">Sonuç</h2>
 <ol style="list-style-type: decimal">
-  <li>A functor is a data type that implements the <code class="lang-rb"><span class="typ">Functor</span></code> typeclass.</li>
-  <li>An applicative is a data type that implements the <code class="lang-rb"><span class="typ">Applicative</span></code> typeclass.</li>
-  <li>A monad is a data type that implements the <code class="lang-rb"><span class="typ">Monad</span></code> typeclass.</li>
-  <li>A <code class="lang-rb"><span class="typ">Maybe</span></code> implements all three, so it is a functor, an applicative, <em>and</em> a monad.</li>
+  <li>Bir functor <code class="lang-rb"><span class="typ">Functor</span></code> typeclass'ının gereklerini yerine getiren bir veri tipidir.</li>
+  <li>Bir applicative <code class="lang-rb"><span class="typ">Applicative</span></code> typeclass'ının gereklerini yerine getiren bir veri tipidir.</li>
+  <li>Bir monad <code class="lang-rb"><span class="typ">Monad</span></code> typeclass'ının gereklerini yerine getiren bir veri tipidir.</li>
+  <li><code class="lang-rb"><span class="typ">Maybe</span></code> üçününde gereklerini yerine getirdiği için hem bir functor, hem bir applicative <em>hem de</em> bir monad'dır.</li>
 </ol>
-<p>What is the difference between the three?</p>
+<p>Üçü arasındaki fark nedir?</p>
 <div class="figure">
   <img src="./functors-applicatives-monads-in-pictures_files/recap.png">
   <p class="caption"></p>
 </div>
 <ul>
   <li>
-    <strong>functors:</strong> you apply a function to a wrapped value using <code class="lang-rb"><span class="pln">fmap</span></code> or <code class="lang-rb"><span class="pun">&lt;</span><span class="pln">$</span><span class="pun">&gt;</span></code></li>
+    <strong>functorgiller:</strong> paketlenmiş bir değere <code class="lang-rb"><span class="pln">fmap</span></code> veya <code class="lang-rb"><span class="pun">&lt;</span><span class="pln">$</span><span class="pun">&gt;</span></code> kullanarak bir fonksiyonu uygularsınız</li>
   <li>
-    <strong>applicatives:</strong> you apply a wrapped function to a wrapped value using <code class="lang-rb"><span class="pun">&lt;*&gt;</span></code> or <code class="lang-rb"><span class="pln">liftA</span></code></li>
+    <strong>applicativegiller:</strong> paketlenmiş bir değere gene paketlenmiş bir fonksiyonu <code class="lang-rb"><span class="pun">&lt;*&gt;</span></code> veya <code class="lang-rb"><span class="pln">liftA</span></code> yoluyla uygularsınız</li>
   <li>
-    <strong>monads:</strong> you apply a function that returns a wrapped value, to a wrapped value using <code class="lang-rb"><span class="pun">&gt;&gt;=</span></code> or <code class="lang-rb"><span class="pln">liftM</span></code></li>
+    <strong>monadgiller:</strong> paketlenmiş bir değer dönen bir fonksiyonu paketlenmiş bir değere <code class="lang-rb"><span class="pun">&gt;&gt;=</span></code> veya <code class="lang-rb"><span class="pln">liftM</span></code> yoluyla uygularsınız</li>
 </ul>
-<p>So, dear friend (I think we are friends by this point), I think we both agree that monads are easy and a SMART IDEA(tm). Now that you’ve wet your whistle on this guide, why not pull a Mel Gibson and grab the whole bottle. Check out LYAH’s <a href="http://learnyouahaskell.com/a-fistful-of-monads">section on Monads</a>. There’s a lot of things I’ve glossed over because Miran does a great job going in-depth with this stuff.</p>
-<h2 id="translations">Translations</h2>
-<p>This post has been translated into:</p>
-<ul>
-  <li>
-    <a href="http://habrahabr.ru/post/183150/">Russian</a>
-  </li>
-  <li>
-    <a href="http://qiita.com/suin/items/0255f0637921dcdfe83b">Japanese</a>
-  </li>
-  <li>
-    <a href="https://github.com/netpyoung/netpyoung.Notes/tree/master/external/haskell/functors_applicatives_and_monads_in_pictures">Korean</a>
-  </li>
-  <li>
-    <a href="http://jiyinyiyong.github.io/monads-in-pictures/">Chinese</a>
-  </li>
-  <li>
-    <a href="http://www.leonardmeyer.com/blog/2014/06/functors-applicatives-et-monads-en-images/">French</a>
-  </li>
-  <li>
-    <a href="https://github.com/dbrattli/OSlash/wiki/Functors,-Applicatives,-And-Monads-In-Pictures">Python</a>
-  </li>
-  <li>
-    <a href="http://www.mokacoding.com/blog/functor-applicative-monads-in-pictures">Swift</a>
-  </li>
-  <li>
-    <a href="http://pablogonzalezalba.com/blog/index.php/2015/07/22/functores-aplicativos-y-monadas-en-imagenes-functors-applicatives-and-monads-in-spanish/">Spanish</a>
-  </li>
-  <li>
-    <a href="http://zinh.github.io/haskell/2015/09/16/functors-applicatives-monads-in-pictures.html">Vietnamese</a>
-  </li>
-</ul>
-<p>If you translate this post, <a href="http://www.adit.io/">send me an email</a> and I’ll add it to this list!</p>
-<p>For more monads and pictures, check out <a href="http://adit.io/posts/2013-06-10-three-useful-monads.html">three useful monads</a>.</p>
+<p>Sözün özü, değerli arkadaşım (bu noktadan sonra artık arkadaş olduğumuzu düşünüyorum), sanırım ikimiz de monadgillerin kolay ve zekice bir fikir olduğunda hemfikiriz. Bu rehberle tadını aldıktan sonra 'İdare edemem Anne!' diyorsan eğer LYAH’in <a href="http://learnyouahaskell.com/a-fistful-of-monads">Monadgiller</a> kısmına gözatabilirsin. Atladığım çok şey var çünkü zaten Miran bu konuda etraflıca bilgi verirken mükemmel bir iş çıkarmış.</p>
+
+<h2 id="translations">Çeviri</h2>
+<p>Çeviri <a href="https://github.com/rimbi/">Cem Eliguzel</a> tarafından "Bu sefer her şey aydınlanacak!" hezeyanlarından birinde bir bayram sabahı kaleme alınmıştır.</p>
+<p><a href="http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html">Orijinal metin</a> <a href="http://adit.io/index.html">Aditya Bhargava</a> tarafından kaleme almıştır.</p>
+<p>Çeviriye katkıda bulunmak için bana bir <a href="http://www.google.com/recaptcha/mailhide/d?k=01_NcqtL_9O10mIpPHc7Hf5Q==&c=sJ_OjAQRxipee0yAjWrkhF9_NxL8nO2BAolcqC_GK8M=">e-mail</a> atabilir ya da bir <a href="https://github.com/rimbi/rimbi.github.io">github pull request</a> gönderebilirsiniz.</p>
 
 
 
 
-<div id="disqus_thread"><iframe id="dsq-1" data-disqus-uid="1" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" width="100%" src="./functors-applicatives-monads-in-pictures_files/saved_resource.html" style="width: 100% !important; border: none !important; overflow: hidden !important; height: 6968px !important;" horizontalscrolling="no" verticalscrolling="no"></iframe></div>
+<div id="disqus_thread"></div>
 <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'aditio'; // required: replace example with your forum shortname
-    // var disqus_developer = 1; // developer mode is on
-
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'rimbisblog';
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     })();
 </script>
-<noscript>Please enable JavaScript to view the &lt;a href="http://disqus.com/?ref_noscript"&gt;comments powered by Disqus.&lt;/a&gt;</noscript>
-
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 
 
         </div>
